@@ -1,13 +1,13 @@
 FROM themattrix/pyenv
 
-LABEL maintainer="Matthew Tardiff <mattrix@gmail.com>"
+LABEL maintainer="Mikuláš Poul <mikulaspoul@gmail.com>"
 
 RUN groupadd -r tox --gid=999 && \
     useradd -m -r -g tox --uid=999 tox
 
 # Install gosu to run tox as the "tox" user instead of as root.
 # https://github.com/tianon/gosu#from-debian
-ENV GOSU_VERSION 1.10
+ENV GOSU_VERSION 1.12
 RUN set -x && \
     apt-get update && apt-get install -y --no-install-recommends ca-certificates wget && rm -rf /var/lib/apt/lists/* && \
     dpkgArch="$(dpkg --print-architecture | awk -F- '{ print $NF }')" && \
@@ -21,9 +21,9 @@ RUN set -x && \
     gosu nobody true && \
     apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
-RUN pyenv local 3.7.5 && \
+RUN pyenv local 3.9.4 && \
     python -m pip install -U pip && \
-    python -m pip install tox==3.14.0 && \
+    python -m pip install tox==3.23.0 && \
     pyenv local --unset && \
     pyenv rehash
 
