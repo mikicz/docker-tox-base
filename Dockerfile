@@ -42,9 +42,9 @@ RUN set -eux; \
 	gosu --version; \
 	gosu nobody true
 
-RUN pyenv local 3.10.0 && \
+RUN pyenv local 3.11.0 && \
     python -m pip install -U pip && \
-    python -m pip install tox==3.24.4 && \
+    python -m pip install tox==3.27.1 && \
     pyenv local --unset && \
     pyenv rehash
 
