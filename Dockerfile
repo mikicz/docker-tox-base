@@ -7,18 +7,12 @@ RUN groupadd -r tox --gid=999 && \
 
 # Install gosu to run tox as the "tox" user instead of as root.
 # https://github.com/tianon/gosu/blob/master/INSTALL.md#from-debian
-ENV GOSU_VERSION 1.14
+ENV GOSU_VERSION 1.16
 RUN set -eux; \
 # save list of currently installed packages for later so we can clean up
 	savedAptMark="$(apt-mark showmanual)"; \
 	apt-get update; \
-	apt-get install -y --no-install-recommends ca-certificates wget; \
-	if ! command -v gpg; then \
-		apt-get install -y --no-install-recommends gnupg2 dirmngr; \
-	elif gpg --version | grep -q '^gpg (GnuPG) 1\.'; then \
-# "This package provides support for HKPS keyservers." (GnuPG 1.x only)
-		apt-get install -y --no-install-recommends gnupg-curl; \
-	fi; \
+	apt-get install -y --no-install-recommends ca-certificates gnupg wget; \
 	rm -rf /var/lib/apt/lists/*; \
 	\
 	dpkgArch="$(dpkg --print-architecture | awk -F- '{ print $NF }')"; \
@@ -29,7 +23,7 @@ RUN set -eux; \
 	export GNUPGHOME="$(mktemp -d)"; \
 	gpg --batch --keyserver hkps://keys.openpgp.org --recv-keys B42F6819007F00F88E364FD4036A9C25BF357DD4; \
 	gpg --batch --verify /usr/local/bin/gosu.asc /usr/local/bin/gosu; \
-	command -v gpgconf && gpgconf --kill all || :; \
+	gpgconf --kill all; \
 	rm -rf "$GNUPGHOME" /usr/local/bin/gosu.asc; \
 	\
 # clean up fetch dependencies
@@ -42,9 +36,9 @@ RUN set -eux; \
 	gosu --version; \
 	gosu nobody true
 
-RUN pyenv local 3.11.0 && \
+RUN pyenv local 3.11.3 && \
     python -m pip install -U pip && \
-    python -m pip install tox==3.27.1 && \
+    python -m pip install tox==4.5.1 && \
     pyenv local --unset && \
     pyenv rehash
 
